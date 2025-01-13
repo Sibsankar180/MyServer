@@ -20,7 +20,7 @@ const myServer = http.createServer((req , res) =>{
             }
                 
         })
-        res.end("Welcome");
+        
 });
 
 myServer.listen(8000, () =>{console.log("ServerStarted")});
