@@ -1,38 +1,38 @@
-const http = require("http");
-const fs = require("fs");
-const url =require("url");
 
-http.createServer((req, res) => {
-  myUrl = url.parse(req.url,true);
+let http = require("http");
+let fs = require("fs");
+const url = require("url");
+
+function myHandler(req,res){
+let  myUrl = url.parse(req.url,true);
+ console.log(myUrl);
   
-  if(myUrl.pathname === "/favicon.ico") return res.end() ;
-  log = `${Date.now()} : ${myUrl.pathname} request received\n`;
+  if(myUrl.path === '/favicon.ico') return res.end();
+  let log = `${myUrl.path} and this is ${res.method} at ${Date.now() }\n`;
+  fs.appendFile("./log.txt" ,log, (err,data)=>{
+     switch(myUrl.path){
+      case "/":
+        if(res.method === "GET")
+        res.end("this home page and you are doing get reqest\n");
+        break;
 
-    fs.appendFile("./log.txt",log,(err,data) =>{
+      case '/about':
+        res.end("this is about section\n");
+        break;
+        
+      case '/signup':
+         if(res.method === 'GET')
+          res.end("You are singing up");
+        else if(res.method === 'POST'){
+           //DB query..
+           res.end("ok, you are now our user\n");
+         }  
+     }
+  })
+}
 
-      switch(myUrl.pathname){
-       case "/" :
-         res.write("HOME PAGE");
-         break;
-        case '/search':
-          search = myUrl.query.search_thing;
-          res.write(`This is your search content ${search}`);
-          break;
-        case '/name':
-          name = myUrl.query.name;
-          res.write(`hello ${name} how are you?`);
-          break;
-
-        default: res.write("404 not found\n");  
-          
-
-      }
-      res.end();
-    })
-     
-
-  }).listen(8088, () =>{console.log("all good")});
-
+let myServer = http.createServer(myHandler);
+myServer.listen(8081,()=>{console.log('hello perfect')});
 
   
 
